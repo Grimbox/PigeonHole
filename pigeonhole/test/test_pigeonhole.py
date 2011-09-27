@@ -67,7 +67,7 @@ class TestPigeonHoleFunctions(unittest.TestCase):
 	def test_findFolder(self):
 		"""Try to move a file to a specific location"""
 
-		
+		pass
 		
 
 		

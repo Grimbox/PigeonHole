@@ -8,8 +8,8 @@ setup {
 	packages=['pigeonhole','pigeonhole.test'],
 	scripts=[],
 	url='',
-	licence='LICENCE.txt',
+	licence='LICENCE',
 	description='',
-	long_description=long_description=open('README.txt').read(),
+	long_description=long_description=open('README').read(),
 	install_require=[],
 }
