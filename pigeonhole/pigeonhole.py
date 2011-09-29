@@ -29,10 +29,12 @@ class Show(object):
 	
 	path = None
 	name = None
+	directory = None
 
 	def __init__(self, fullname, filename):
 		self.path = fullname
 		self.name = filename
+		self.directory = os.path.dirname(self.path)
 
 	def __str__(self):
 		return self.name
@@ -84,8 +86,10 @@ class PigeonHole(object):
 		if destinationfile is not None:
 			self.move(show.path, destinationfile)
 
-			if self.isDeletable(show.path):
-				shutil.rmtree(show.path)
+			if self.isDeletable(show.directory):
+				print '\tDeleting ' + show.directory
+				shutil.rmtree(show.directory)
+				
 		else:
 			for key in config.shows_dict:
 				if key.lower() in show.name.lower():
@@ -107,7 +111,7 @@ class PigeonHole(object):
 
 	def move(self, originalfile, destinationfile):
 		""" Moves the downloaded file to the found folder. """
-		print "Moving " + originalfile + " to " + destinationfile
+		print 'Moving ' + originalfile + ' to ' + destinationfile
 		shutil.move(originalfile, destinationfile)
 
 	def isDeletable(self, foldername):
@@ -120,9 +124,11 @@ class PigeonHole(object):
 		if foldername == self.downloadDir or foldername == self.rootShows:
 			return False
 
-		if self.downloadDir in foldername or self.rootShows in foldername:
+		if foldername in self.downloadDir or foldername in self.rootShows:
 			return False
 		
+		print 'I got ' + str(sum(1 for x in self.walk2(foldername, config.useless_files_extensions))) + ' int. files'
+
 		if sum(1 for x in self.walk2(foldername, config.useless_files_extensions)) is 0:
 			return True
 
