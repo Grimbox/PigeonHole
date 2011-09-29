@@ -9,6 +9,7 @@ shows_extensions = ('avi', 'mkv')
 
 ### Dictionary for special filenames
 shows_dict = {
-	'white collar' : ['wc'],
-	'the big bang theory' : ['tbbt']
+	'wc' : 'white collar',
+	'tbbt' : 'the big bang theory',
+	'beingerica' : 'being erica',
 }

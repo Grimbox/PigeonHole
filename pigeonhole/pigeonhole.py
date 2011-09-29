@@ -63,7 +63,7 @@ class PigeonHole(object):
 				if filename.endswith(config.shows_extensions):
 					yield Show(os.path.join(root, filename), filename)
 
-	def walk(self, foldername, extensions):
+	def walk2(self, foldername, extensions):
 		for root, dirs, files in os.walk(foldername):
 			for filename in files:
 				if not filename.endswith(extensions):
@@ -73,7 +73,7 @@ class PigeonHole(object):
 		""" Parses the directories within the 'rootShows' folder and stores them as shows in a list. """
 		self.series = [ Folder(os.path.join(self.rootShows, x)) for x in self.directories]
 
-		for path in self.walk(config.shows_extensions):
+		for path in self.walk():
 			self.moveToFolder(path)
 	
 	def moveToFolder(self, show):
@@ -86,6 +86,13 @@ class PigeonHole(object):
 
 			if self.isDeletable(show.path):
 				shutil.rmtree(show.path)
+		else:
+			for key in config.shows_dict:
+				if key.lower() in show.name.lower():
+					if os.path.exists(os.path.join(self.rootShows, config.shows_dict[key])):
+						destinationfile = os.path.join(self.rootShows, config.shows_dict[key], show.name)
+						print destinationfile
+						self.move(show.path, destinationfile)
 
 	def findFolder(self, show):
 		"""Finds and returns the complete destinationpath for a specific show."""
@@ -100,7 +107,7 @@ class PigeonHole(object):
 
 	def move(self, originalfile, destinationfile):
 		""" Moves the downloaded file to the found folder. """
-		print "Moving " + show.name + " to " + destinationfile
+		print "Moving " + originalfile + " to " + destinationfile
 		shutil.move(originalfile, destinationfile)
 
 	def isDeletable(self, foldername):
@@ -116,7 +123,7 @@ class PigeonHole(object):
 		if self.downloadDir in foldername or self.rootShows in foldername:
 			return False
 		
-		if sum(1 for x in self.walk(foldername, config.useless_files_extensions)) is 0:
+		if sum(1 for x in self.walk2(foldername, config.useless_files_extensions)) is 0:
 			return True
 
 		return False
