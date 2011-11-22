@@ -10,21 +10,43 @@ from BeautifulSoup import BeautifulSoup
 
 languages = ('en', 'es', 'fr', 'de')
 
-def queryUrl(baseurl, baseregex):
-	print 'Querying %s w/ %s' % (baseurl, baseregex)
 
-def query(showname):
-	print "Trying " + showname
-	socket = urllib2.urlopen('http://www.tvsubtitles.net/search.php?q=' + showname.replace(' ', '%20'))
+"""
+	Querying a base url with a specific regex and a query.
+
+	eg. baseurl = http://duckduckgo.com/?q=
+		query = my_query
+		baseregex = ... :)
+
+	It will query the url, adds the query string and will fetch every href link that match the regular expression.
+"""
+def queryUrl(baseurl, paramindicator, regex, querystring):
+	socket = urllib2.urlopen(baseurl + paramindicator + querystring)
 	soup = BeautifulSoup(socket.read())
 	socket.close()
 
-	results = soup.findAll(href=re.compile("/tvshow-([A-Za-z0-9]*)\.html$"))
+	tags = soup.findAll(href=re.compile(regex))
 
+	mylist = list()
+
+	for tag in tags:
+		bsoup = BeautifulSoup(str(tag))
+		mylist.append(baseurl + bsoup.a['href'])
+
+	return mylist
+
+def queryShow(showname):
+	return queryUrl('http://www.tvsubtitles.net', '/search.php?q=', '/tvshow-([A-Za-z0-9]*)\.html$', showname.replace(' ', '%20'))
+
+def querySeason(showname, seasonnumber):
+	pass
+
+def query(showname):
+	results = queryShow(showname)
 
 	# a yield here would be cool ! :)
 	if len(results) == 1:
-		print str(results[0])
+		print results[0]
 		return results[0]
 		
 	elif len(results) == 0:
@@ -59,7 +81,7 @@ def getSeason(showname, seasonNumber):
 """
 def getEpisode(showname, seasonNumber, episodeNumber):
 
-	raise Exception('not implemented yet')
+	raise Exception('not yet implemented')
 
 	season = query(showname, seasonNumber)
 
@@ -73,8 +95,8 @@ def getEpisode(showname, seasonNumber, episodeNumber):
 	else:
 		print "no episode found"
 
+"""Supposed to send to the right page, according to the right episode number"""
 def getUrl(showname, seasonNumber, episodeNumber, language):
-	"""Supposed to send to the right page, according to the right episode number"""
 	pass
 
 """ Write a shortcut to a specific web page and fix the shortcutname within the writtent file.
@@ -93,6 +115,11 @@ def writeUrlShortcut(folderpath, filename, url, shortcutname):
 	with open(os.path.join(folderpath, filename), 'w+') as f:
 		f.write(filecontent)
 
+def walk(foldername):
+	for root, dirs, files in os.walk(foldername):
+		for directory in dirs:
+			if query(directory) is not None:
+				yield directory
 
 if __name__ == "__main__":
 	#queryUrl('http://www.tvsubtitles.net/search?q=', 'tvshow')
@@ -103,7 +130,10 @@ if __name__ == "__main__":
 	# query('scrubs')
 	# query('castle')
 
-	getSeason('the big bang theory', 2)
-	getSeason('white collar', 1)
-	getSeason('suits', 1)
-	getSeason('being erica', 2)
+	for match in walk(r'C:\Tmp'):
+		print match
+
+	# getSeason('the big bang theory', 2)
+	# getSeason('white collar', 1)
+	# getSeason('suits', 1)
+	# getSeason('being erica', 2)
