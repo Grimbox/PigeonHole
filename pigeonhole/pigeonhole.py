@@ -5,6 +5,7 @@ import re
 import shutil
 import filecmp
 import config
+from model import Show
 
 class Folder(object):
 	""" Directory show instanciation, relative to a path on the disk
@@ -23,22 +24,6 @@ class Folder(object):
 
 	def __str__(self):
 		return self.name + ' [' + self.directory + ']'
-
-class Show(object):
-	""" Represents a show file; ie. a file associated to its fullname """
-	
-	path = None
-	name = None
-	directory = None
-
-	def __init__(self, fullname, filename):
-		self.path = fullname
-		self.name = filename
-		self.directory = os.path.dirname(self.path)
-
-	def __str__(self):
-		return self.name
-		
 
 class PigeonHole(object):
 	""" Takes all the media files in a (download) folder and sort 
