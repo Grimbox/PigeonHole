@@ -10,7 +10,9 @@ from BeautifulSoup import BeautifulSoup
 
 languages = ('en', 'es', 'fr', 'de')
 
-""" not documented yet
+""" 
+	Represents a custom url object. 
+	It refers to a simple web page and can be embedded anywhere.
 """
 class CustomUrl(object):
 	fullUrl = None
@@ -18,9 +20,9 @@ class CustomUrl(object):
 	base = None
 
 	def __init__(self, base, suffix):
-		self.base = base
-		self.suffix = suffix
-		self.fullUrl = base + suffix
+		self.base = str(base)
+		self.suffix = str(suffix)
+		self.fullUrl = self.base + self.suffix
 
 	def __str__(self):
 		return str(self.fullUrl)
@@ -62,13 +64,6 @@ def queryShow(showname):
 def querySeason(showname, seasonnumber):
 	return [x.replace('.html', '-' + str(seasonnumber) + '.html') for x in queryShow(showname)]
 
-
-"""Supposed to return the url, according to the show name and season number"""
-def getUrl(showname, seasonNumber, episodenumber, language):
-	Raise("not implemented yet")
-	pass
-
-
 """ Write a shortcut to a specific web page and fix the shortcutname within the writtent file.
 	
 	eg. writeUrlShortcut('/opt/tmp', 'google.url', 'http://www.google.com', 'Google')	
@@ -84,18 +79,3 @@ def writeUrlShortcut(folderpath, filename, url, shortcutname):
 
 	with open(os.path.join(folderpath, filename), 'w+') as f:
 		f.write(filecontent)
-
-def walk(foldername):
-	for root, dirs, files in os.walk(foldername):
-		for directory in dirs:
-			
-
-def echo(var):
-	for x in var:
-		print x
-
-if __name__ == "__main__":
-	for x in walk(r'C:\temp'):
-		print x
-
-	echo(queryShow('saison 1'))

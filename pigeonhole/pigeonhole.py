@@ -5,39 +5,20 @@ import re
 import shutil
 import filecmp
 import config
-from model import Show
 
-class Folder(object):
-	""" Directory show instanciation, relative to a path on the disk
-		ie. Show name
-			- Season 1
-			- Season 2
-			- ...
-	"""
-	
-	directory = None
-	name = None
-
-	def __init__(self, path):
-		self.directory = path;
-		self.name = os.path.basename(self.directory)
-
-	def __str__(self):
-		return self.name + ' [' + self.directory + ']'
+from model import *
 
 class PigeonHole(object):
 	""" Takes all the media files in a (download) folder and sort 
 		them into the corresponding folder, based on the found file name
 	"""
 	
-	directories = None
-	series = None
 	matches = None
 
-	downloadDir = ""
-	rootShows = ""
-
 	def __init__(self, root, downloaddir):
+
+		self.structure = Structure(root)
+
 		self.downloadDir = downloaddir
 		self.rootShows = root
 		self.directories = os.listdir(self.rootShows)
@@ -128,3 +109,5 @@ class PigeonHole(object):
 if __name__ == "__main__":
 	pHole = PigeonHole(r'C:\test', r'C:\temp')
 	pHole.process()
+	pHole.structure.writeUrls()
+

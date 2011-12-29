@@ -1,30 +1,28 @@
 from subQuery import *
+import os
 
 class Structure(object):
+	"""Represents the complete structure, with its shows, seasons and episodes"""
+	
+	def __init__(self, path):
+		self.shows = [Show(os.path.join(path, x)) for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
 
-	def __init__(self):
-		print 'building myself'
+	def writeUrls(self):
+		for s in self.shows:
+			for season in s.seasons:
+				season.writeUrl()
 
 class Show(object):
 	""" Represents a show file; ie. a file associated to its fullname """
-	
-	path = None
-	name = None
-	directory = None
 
-	url = None
+	def __init__(self, path):
 
-	Seasons = list()
+		self.path = path
+		self.name = os.path.basename(path)
 
-	def append(self, season):
-		self.Seasons.append(season)
-		season.parent = self
+		self.url = queryShow(self.name)
 
-	def __init__(self, fullname, filename):
-		self.path = fullname
-		self.name = filename
-		self.directory = os.path.dirname(self.path)
-		url = queryShow(self.name)
+		self.seasons = [Season(self, os.path.join(path, x)) for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
 
 	def __str__(self):
 		return self.name
@@ -32,16 +30,59 @@ class Show(object):
 class Season(object):
 	""" Represents a season within a show """
 
-	seasonnumber = None
-	parent = None
+	def __init__(self, parent, path):
 
-	def __init__(self, seasonnumber):
-		self.seasonnumber = seasonnumber
+		self.parent = parent
+		self.path = path
+		self.name = os.path.basename(path)
+		self.seasonnumber = re.findall('[0-9]+', os.path.basename(path))[0]
+		self.episodes = [Episode(self, os.path.join(path, x)) for x in os.listdir(path) if os.path.isfile(os.path.join(path, x))]
+
+		self.url = querySeason(parent.name, self.seasonnumber)
+
+	def writeUrl(self):
+		if len(self.url) == 1:
+			results = querySeason(self.parent.name, self.seasonnumber)
+
+			if len(results) == 1:
+				print 'Writing subtitles shortcut for ' + self.parent.name
+				writeUrlShortcut(self.path, self.parent.name + '.url', str(self.url[0]), 'InternetShortcut')
+			elif len(results) == 0:
+				print 'no results have been found for ' + self.parent.name
+			else:
+				print 'too much results have been found'
+		elif len(self.url) == 0:
+			print 'too few urls for ' + self.parent.name
+		else:
+			print 'too many urls for ' + self.parent.name
 
 class Episode(object):
 	""" Represents an episode within a season """
 
-	title = None
+	def __init__(self, parent, path):
+		print 'Building an episode: ' + path
 
-	def __init__(self, title):
-		self.title = title
+		self.parent = parent
+		self.path = path
+		self.name = os.path.basename(path)
+
+	def __str__(self):
+		return self.name
+
+class Folder(object):
+	""" Directory show instanciation, relative to a path on the disk
+		ie. Show name
+			- Season 1
+			- Season 2
+			- ...
+	"""
+	
+	directory = None
+	name = None
+
+	def __init__(self, path):
+		self.directory = path;
+		self.name = os.path.basename(self.directory)
+
+	def __str__(self):
+		return self.name + ' [' + self.directory + ']'

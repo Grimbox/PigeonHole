@@ -1,10 +1,9 @@
-import random
 import unittest
 import tempfile
 import shutil
 import os
-from pigeonhole import PigeonHole
-import config
+from pigeonhole import *
+#import config
 
 class TestPigeonHoleFunctions(unittest.TestCase):
 	"""Test the methods defined inside the PigeonHole class"""
@@ -19,7 +18,7 @@ class TestPigeonHoleFunctions(unittest.TestCase):
 		os.mkdir(os.path.join(self.rootdir, 'The Big Bang Theory'))
 		os.mkdir(os.path.join(self.rootdir, 'Being Erica'))
 
-		self.pigeonHole = PigeonHole(self.rootdir, self.downloaddir)
+		self.pigeonHole = pigeonhole.PigeonHole(self.rootdir, self.downloaddir)
 		
 		self.notDeletableTmpDir = tempfile.mkdtemp(prefix='pigeonHole_')
 		self.deletableTmpDir = tempfile.mkdtemp(prefix='pigeonHole_')
