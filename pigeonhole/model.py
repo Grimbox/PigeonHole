@@ -60,8 +60,7 @@ class Episode(object):
 	""" Represents an episode within a season """
 
 	def __init__(self, parent, path):
-		print 'Building an episode: ' + path
-
+		
 		self.parent = parent
 		self.path = path
 		self.name = os.path.basename(path)
