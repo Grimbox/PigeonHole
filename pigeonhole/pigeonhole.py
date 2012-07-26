@@ -16,30 +16,37 @@ class PigeonHole(object):
 	matches = None
 
 	def __init__(self, root, downloaddir):
+		print "Building pigeon hole with %s and %s" % (root, downloaddir)
 
 		self.structure = Structure(root)
 
 		self.downloadDir = downloaddir
 		self.rootShows = root
 		self.directories = os.listdir(self.rootShows)
+
 		self.series = list()
+		self.movedFiles = list()
 
 	def walk(self):		
 		""" Walks through the downloaded folders and yields .avi and .mkv files """
 		for root, dirs, files in os.walk(self.downloadDir):
 			for filename in files:			
 				if filename.endswith(config.shows_extensions):
-					yield Show(os.path.join(root, filename), filename)
+					yield Show(os.path.join(root, filename))
 
 	def walk2(self, foldername, extensions):
 		for root, dirs, files in os.walk(foldername):
 			for filename in files:
 				if not filename.endswith(extensions):
+					print "%s doesn't end with %s" % (filename, extensions)
 					yield os.path.join(root, filename)
 	
 	def process(self):
 		""" Parses the directories within the 'rootShows' folder and stores them as shows in a list. """
 		self.series = [ Folder(os.path.join(self.rootShows, x)) for x in self.directories]
+
+		for show in self.series:
+			print show
 
 		for path in self.walk():
 			self.moveToFolder(path)
@@ -47,14 +54,17 @@ class PigeonHole(object):
 	def moveToFolder(self, show):
 		""" Moves a specific show to its right folder. """
 		
+		print "Trying to find %s" % (show)
+
 		destinationfile = self.findFolder(show)
 
 		if destinationfile is not None:
 			self.move(show.path, destinationfile)
+			self.movedFiles.append(destinationfile)
 
-			if self.isDeletable(show.directory):
-				print '\tDeleting ' + show.directory
-				shutil.rmtree(show.directory)
+			if self.isDeletable(show.directory()):
+				print '\tDeleting ' + show.directory()
+				shutil.rmtree(show.directory())
 				
 		else:
 			for key in config.shows_dict:
@@ -72,6 +82,7 @@ class PigeonHole(object):
 
 		for s in self.series:
 			if s.name.lower() in result:
+				print "Association found %s %s" % (s.directory, show.name)
 				return os.path.join(s.directory, show.name)
 
 
@@ -85,7 +96,10 @@ class PigeonHole(object):
 			ie. .nfo, .srr or .sfv files. 
 		"""
 		if foldername is None:
-			return False
+			return Show(os.path.join(root, filename))
+
+
+		print "Foldername value is %s" % (foldername)
 
 		if foldername == self.downloadDir or foldername == self.rootShows:
 			return False
@@ -100,6 +114,12 @@ class PigeonHole(object):
 
 		return False
 		
+	def getSubtitles(self):
+		import subprocess
+		for file in self.movedFiles:
+			### subliminal -l en The.Big.Bang.Theory.S05E18.HDTV.x264-LOL.mp4
+			 subprocess.call(["subliminal", "-l", "fr", file])
+		
 	def __str__(self):
 		return 'PigeonHole module'
 	
@@ -107,7 +127,8 @@ class PigeonHole(object):
 		return 'PigeonHole'
 
 if __name__ == "__main__":
-	pHole = PigeonHole(r'C:\test', r'C:\temp')
+	pHole = PigeonHole(config.ROOT_FOLDER, config.DL_FOLDER)
 	pHole.process()
-	pHole.structure.writeUrls()
+	pHole.getSubtitles()
+	#pHole.structure.writeUrls()
 

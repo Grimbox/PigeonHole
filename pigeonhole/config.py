@@ -1,11 +1,15 @@
 # -*- coding: UTF8 -*- 
 # Configuration file
 
+### Defines the folder to watch and the destination folder
+ROOT_FOLDER = r'/home/fred/Videos/Series' 
+DL_FOLDER = r'/home/fred/Téléchargements/complete'
+
 ### If a folder only contains these types of files, we can delete it.
-useless_files_extensions = ('srr', 'nfo', 'sfv')
+useless_files_extensions = ('srr', 'nfo', 'sfv', 'nzb')
 
 ### Consider only files with these extensions
-shows_extensions = ('avi', 'mkv')
+shows_extensions = ('avi', 'mkv', 'mp4')
 
 ### Dictionary for special filename contents
 shows_dict = {

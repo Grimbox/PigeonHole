@@ -19,10 +19,13 @@ class Show(object):
 
 		self.path = path
 		self.name = os.path.basename(path)
+		
+	def directory(self):
+		return os.path.dirname(self.path)
 
-		self.url = queryShow(self.name)
+		#self.url = queryShow(self.name)
 
-		self.seasons = [Season(self, os.path.join(path, x)) for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
+		#self.seasons = [Season(self, os.path.join(path, x)) for x in os.listdir(path) if os.path.isdir(os.path.join(path, x))]
 
 	def __str__(self):
 		return self.name
