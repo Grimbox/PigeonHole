@@ -39,6 +39,7 @@ class PigeonHole(object):
 			for filename in files:
 				if not filename.endswith(extensions):
 					print "%s doesn't end with %s" % (filename, extensions)
+
 					yield os.path.join(root, filename)
 	
 	def process(self):
@@ -60,6 +61,7 @@ class PigeonHole(object):
 
 		if destinationfile is not None:
 			self.move(show.path, destinationfile)
+
 			self.movedFiles.append(destinationfile)
 
 			if self.isDeletable(show.directory()):
@@ -83,6 +85,7 @@ class PigeonHole(object):
 		for s in self.series:
 			if s.name.lower() in result:
 				print "Association found %s %s" % (s.directory, show.name)
+
 				return os.path.join(s.directory, show.name)
 
 
@@ -100,6 +103,7 @@ class PigeonHole(object):
 
 
 		print "Foldername value is %s" % (foldername)
+
 
 		if foldername == self.downloadDir or foldername == self.rootShows:
 			return False
@@ -131,4 +135,5 @@ if __name__ == "__main__":
 	pHole.process()
 	pHole.getSubtitles()
 	#pHole.structure.writeUrls()
+
 

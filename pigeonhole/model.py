@@ -19,6 +19,7 @@ class Show(object):
 
 		self.path = path
 		self.name = os.path.basename(path)
+
 		
 	def directory(self):
 		return os.path.dirname(self.path)

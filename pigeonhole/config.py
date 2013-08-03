@@ -2,8 +2,8 @@
 # Configuration file
 
 ### Defines the folder to watch and the destination folder
-ROOT_FOLDER = r'/home/fred/Videos/Series' 
-DL_FOLDER = r'/home/fred/Téléchargements/complete'
+ROOT_FOLDER = r'/home/<username>/Videos/Series' 
+DL_FOLDER = r'/home/<username>/Downloads/complete'
 
 ### If a folder only contains these types of files, we can delete it.
 useless_files_extensions = ('srr', 'nfo', 'sfv', 'nzb')
@@ -16,4 +16,3 @@ shows_dict = {
 	'wc' : 'white collar',
 	'tbbt' : 'the big bang theory',
 	'beingerica' : 'being erica',
-}
